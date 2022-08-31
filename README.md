@@ -1,2 +1,2 @@
 # academy
-Repository about learning DevOps in AWS
+Welcome to DevOps Codes Academy
