@@ -12,3 +12,12 @@ terraform {
 provider "aws" {
   region = "eu-central-1"
 }
+
+terraform {
+  backend "s3" {
+    bucket         = "devopscodesacademyremotestate"
+    key            = "infrastructure/eu-central-1/terraform.tfstate"
+    region         = "eu-central-1"
+    dynamodb_table = "devopscodesacademy-tf-locks"
+  }
+}
