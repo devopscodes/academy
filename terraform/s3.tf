@@ -29,17 +29,17 @@ resource "aws_s3_bucket_policy" "allow_access" {
 
 data "aws_iam_policy_document" "allow_access" {
   statement {
+    actions   = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.my-bucket.arn}/*"]
+
     principals {
-      type        = "*"
-      identifiers = ["*"]
+      type        = "AWS"
+      identifiers = [aws_cloudfront_origin_access_identity.my_origin_access_identity.iam_arn]
     }
-
-    actions = [
-      "s3:GetObject",
-    ]
-
-    resources = [
-      "${aws_s3_bucket.my-bucket.arn}/*",
-    ]
   }
+}
+
+resource "aws_s3_bucket_acl" "my-bucket" {
+  bucket = aws_s3_bucket.my-bucket.id
+  acl    = "private"
 }
