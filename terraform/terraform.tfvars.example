@@ -1,0 +1,5 @@
+# Default values to work
+project_name = "dcacademy"
+region       = "eu-central-1"
+environment  = "test"
+backend_port = 80

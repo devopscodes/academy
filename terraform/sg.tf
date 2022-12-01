@@ -1,5 +1,5 @@
 resource "aws_security_group" "allow_public_alb" {
-  name        = "devopscodes-allow-public-alb"
+  name        = "allow-public-alb-${local.stack_name}"
   description = "Allow inbound traffic to public ALB"
   vpc_id      = module.vpc.vpc_id
   ingress {
@@ -20,28 +20,28 @@ resource "aws_security_group" "allow_public_alb" {
 
   egress {
     description = "HTTP to backend"
-    from_port   = 80
-    to_port     = 80
+    from_port   = var.backend_port
+    to_port     = var.backend_port
     protocol    = "tcp"
     cidr_blocks = [var.vpc_cidr]
   }
 }
 
 resource "aws_security_group" "allow_http_from_alb" {
-  name        = "devopscodes-allow-http-from-alb"
+  name        = "allow-http-from-alb-${local.stack_name}"
   description = "Allow inbound traffic to NGINX from ALB"
   vpc_id      = module.vpc.vpc_id
 
   ingress {
-    description = "HTTP from Internet"
-    from_port   = 80
-    to_port     = 80
+    description = "HTTP from ALB"
+    from_port   = var.backend_port
+    to_port     = var.backend_port
     protocol    = "tcp"
     cidr_blocks = [var.vpc_cidr]
   }
 
   egress {
-    description = "HTTP to backend"
+    description = "Internet access"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"

@@ -1,8 +1,18 @@
+locals {
+  stack_name = "${var.project_name}-${var.region}-${var.environment}"
+  default_tags = {
+    Terraform   = true
+    Project     = var.project_name
+    Region      = var.region
+    Environment = var.environment
+  }
+}
+
 terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.16"
+      version = "~> 4.44.0"
     }
   }
 
@@ -11,6 +21,9 @@ terraform {
 
 provider "aws" {
   region = "eu-central-1"
+  default_tags {
+    tags = local.default_tags
+  }
 }
 
 terraform {
