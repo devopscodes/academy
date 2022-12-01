@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "my-bucket" {
-  bucket = "my-devopscodes-s3-bucket"
+  bucket = "s3-${local.stack_name}"
 
   tags = {
     Name        = "My bucket"
