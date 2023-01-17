@@ -1,5 +1,5 @@
 resource "aws_lb" "front" {
-  name               = substr("alb-pub-${local.stack_name}", 0 ,32)
+  name               = substr("alb-pub-${local.stack_name}", 0, 32)
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.allow_public_alb.id]

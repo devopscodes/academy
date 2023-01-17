@@ -1,25 +1,42 @@
 locals {
-  s3_origin_id = "DevOpsCodesAcademyOriginS3"
+  s3_origin_id = "DevOpsCodesAcademyOriginS3Web"
 }
 
-resource "aws_cloudfront_origin_access_identity" "my_origin_access_identity" {
-  comment = "Some comment"
+resource "random_password" "custom_header" {
+  length      = 13
+  special     = false
+  lower       = true
+  upper       = true
+  numeric     = true
+  min_lower   = 1
+  min_numeric = 1
+  min_upper   = 1
 }
 
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
-    domain_name = aws_s3_bucket.my-bucket.bucket_regional_domain_name
+    domain_name = aws_s3_bucket.my-bucket.website_endpoint
     origin_id   = local.s3_origin_id
 
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.my_origin_access_identity.cloudfront_access_identity_path
+    custom_header {
+      name  = "Referer"
+      value = random_password.custom_header.result
+    }
+    custom_origin_config {
+      http_port                = 80
+      https_port               = 443
+      origin_keepalive_timeout = 5
+      origin_protocol_policy   = "http-only"
+      origin_read_timeout      = 30
+      origin_ssl_protocols = [
+        "TLSv1.2",
+      ]
     }
   }
 
-  enabled             = true
-  is_ipv6_enabled     = true
-  comment             = "My first CDN"
-  default_root_object = "index.html"
+  enabled         = true
+  is_ipv6_enabled = true
+  comment         = "My first CDN"
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
@@ -34,7 +51,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       }
     }
 
-    viewer_protocol_policy = "allow-all"
+    viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
     default_ttl            = 3600
     max_ttl                = 86400

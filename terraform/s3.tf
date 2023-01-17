@@ -28,13 +28,20 @@ resource "aws_s3_bucket_policy" "allow_access" {
 }
 
 data "aws_iam_policy_document" "allow_access" {
+  policy_id = "PolicyForCloudFrontPrivateContent"
   statement {
+    sid       = "AllowCloudFrontServicePrincipal"
     actions   = ["s3:GetObject"]
     resources = ["${aws_s3_bucket.my-bucket.arn}/*"]
 
     principals {
-      type        = "AWS"
-      identifiers = [aws_cloudfront_origin_access_identity.my_origin_access_identity.iam_arn]
+      type        = "*"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "StringLike"
+      variable = "aws:Referer"
+      values   = [random_password.custom_header.result]
     }
   }
 }
